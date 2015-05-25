@@ -6,9 +6,9 @@ The pieces was designed like below
 
 You can run the command with the following command: 
 
-python  piece_maker.py  <image name> <row number> <column number> 
+python  piece_maker.py  image_name row_number column_number 
 
-Example: 
+Example:<br> 
 python  piece_maker.py images/car.jpg 3 4 
 
 
