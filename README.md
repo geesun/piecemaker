@@ -11,4 +11,7 @@ python  piece_maker.py  image_name row_number column_number
 Example:<br> 
 python  piece_maker.py images/car.jpg 3 4 
 
+Example outline:
+![Out Line](https://raw.github.com/geesun/piecemaker/master/_pieces/car/piece_outline.png)
+
 
