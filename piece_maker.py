@@ -380,22 +380,34 @@ def createPuzzlePieces(name,row,col,outPrefix):
 
     draw = ImageDraw.Draw(im)
     outLinePoints = [] 
-
+    json="{"
+    first = True
     for i in range (0,row):
         for j in range (0,col):
             rect,center,borders = info.getPieceInfo(i,j)
+            name = outPrefix + str(i) + "_" + str(j)
+            if not first:
+                json +=","
+            first = False
 
+            json +="\n    \"" + os.path.basename(name) + "\":[" + str(rect[0]) + "," + str(rect[1]) + "]" 
             region = im.crop(rect)
             curvPoints = outLine.genOutLine(borders) 
 
             cropPoints = [] 
             for p in curvPoints:
                 cropPoints.append((p[0] + center[0],p[1] + center[1]))
-            polygonCropImage(region,cropPoints,outPrefix + str(i) + "_" + str(j)+ ".png");
+            polygonCropImage(region,cropPoints,name + ".png");
             
             for p in curvPoints:
                 outLinePoints.append((p[0] + j * w  + 0.5 * w ,p[1] + i * h + 0.5 * h))
     
+    json +="\n}\n"
+    dataFile = open(outPrefix + "data.json" ,"w"); 
+    dataFile.write(json)
+    dataFile.flush()
+    dataFile.close()
+
     bgColor = (255,255,255,0)
     lineColor = (0,0,0,255)
 
