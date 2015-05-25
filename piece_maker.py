@@ -369,6 +369,7 @@ def createPuzzlePieces(name,row,col,outPrefix):
     im = Image.open(name).convert("RGBA")
     arcRatio = 0.07
     connectRatio = 0.3
+    r = 3
 
     info = PieceInfo(im.size,row,col,arcRatio,connectRatio)
 
@@ -378,6 +379,8 @@ def createPuzzlePieces(name,row,col,outPrefix):
     h = im.size[1]/row
 
     draw = ImageDraw.Draw(im)
+    outLinePoints = [] 
+
     for i in range (0,row):
         for j in range (0,col):
             rect,center,borders = info.getPieceInfo(i,j)
@@ -390,46 +393,37 @@ def createPuzzlePieces(name,row,col,outPrefix):
                 cropPoints.append((p[0] + center[0],p[1] + center[1]))
             polygonCropImage(region,cropPoints,outPrefix + str(i) + "_" + str(j)+ ".png");
             
-            outLinePoints = [] 
             for p in curvPoints:
                 outLinePoints.append((p[0] + j * w  + 0.5 * w ,p[1] + i * h + 0.5 * h))
-            
-            drawO = False 
-            if drawO:
-                draw.polygon(outLinePoints,fill=(255,255,255,128),outline = (0,0,0,100))
-                
-                #draw it again make it more than 1px 
-                for k in range(0,3):
-                    drawPxPoints = [] 
-                    for f in range(0,len(curvPoints) -1 ):
-                        p = curvPoints[f]
-                        n = curvPoints[f + 1]
+    
+    bgColor = (255,255,255,0)
+    lineColor = (0,0,0,255)
 
-                        px = p[0] + j * w  + 0.5 * w  
-                        py = p[1] + i * h + 0.5 * h
-                        
-                        qx = p[0] + j * w  + 0.5 * w  
-                        qy = p[1] + i * h + 0.5 * h
+    outLinedraw = ImageDraw.Draw(im)
 
-                        nx = n[0] + j * w  + 0.5 * w  
-                        ny = n[1] + i * h + 0.5 * h
+    outLinedraw.rectangle( [ (0,0), (im.size[0],im.size[1]) ],fill = bgColor,outline = bgColor)
 
-                        if p[0] > 0:
-                            px = px - k
-                        else:
-                            px = px + k
+    for p in outLinePoints:
+        px = p[0]
+        py = p[1]
+        outLinedraw.ellipse( (px - r, py - r, px + r, py + r ), fill=lineColor ,outline = lineColor)
+    
+    for x in range(0,im.size[0]):
+        px = x
+        py = 0.5 * r
+        outLinedraw.ellipse( (px - r, py - r, px + r, py + r ), fill=lineColor,outline = lineColor)
+        py = im.size[1] - 0.5 * r
+        outLinedraw.ellipse( (px - r, py - r, px + r, py + r ), fill=lineColor,outline = lineColor)
+    
+    for y in range(0,im.size[1]):
+        px = 0.5 * r
+        py = y
+        outLinedraw.ellipse( (px - r, py - r, px + r, py + r ), fill=lineColor,outline = lineColor)
+        px = im.size[0] - 0.5 * r
+        outLinedraw.ellipse( (px - r, py - r, px + r, py + r ), fill=lineColor,outline = lineColor)
 
-                        if p[1] > 0: 
-                            py = py - k
-                        else:
-                            py = py + k
-                        
-                        box = [(qx,py),(px,qy)]
-                        draw.rectangle(box,outline = (0,0,0,100),fill = (0,0,0,100))
-                        box = [(px,py),(nx,ny)]
-                        draw.rectangle(box,outline = (0,0,0,100),fill = (0,0,0,100))
-
-    im.show()
+    im.save(outPrefix + "outline.png");
+    #im.show()
 
 
 
